@@ -17,6 +17,9 @@ spec:
       containers:
       - name: hellozcp
         image: pog-dev-registry.cloudzcp.io/earth1223/hellozcp:develop
+        env:
+          name: foo
+          value: var
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
