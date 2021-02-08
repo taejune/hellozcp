@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -159,5 +162,20 @@ public class HelloZcpApplication {
 		}
   		return "Done. Check Log.";
   	}
+  	
+  	@GetMapping("/nslookup")
+  	public ResponseEntity<Object> nslookup(@RequestParam String host) throws UnknownHostException {
+  	    logger.info("Nslookup for - {}", host);
+  	    InetAddress[] all = InetAddress.getAllByName(host);
+
+  	    List<String> addresses = new ArrayList<>(); 
+  	    for (int i = 0 ; i < all.length ; i++) {
+  	        InetAddress inet = all[i];
+  	        addresses.add(inet.getHostAddress());
+  	        logger.info("address for - {}", host);
+  	    }
+  	    
+  	    return ResponseEntity.ok(addresses);
+    }
   	
 }
