@@ -46,7 +46,7 @@ public class HelloZcpApplication {
 	@GetMapping("/home") 
 	public String home() {
 		logger.info("--------- home start ----------");
-		return "Hello ZCP v2";
+		return "Hello ZCP v1";
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
