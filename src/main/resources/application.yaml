@@ -3,7 +3,13 @@ logging:
   path : var/log/application
 
 management:
+  port: 8090
+  security:
+    enabled: false
+    roles:
+      - ADMIN
+  context-path: /actuator
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: "*"
