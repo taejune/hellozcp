@@ -1,3 +1,9 @@
 logging:
   config: classpath:logback.xml
   path : var/log/application
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
