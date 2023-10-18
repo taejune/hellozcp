@@ -10,35 +10,31 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import ch.qos.logback.classic.ClassicConstants;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-public class MdcLoggingFilter implements Filter {
+public class MdcLoggingFilter extends OncePerRequestFilter {
+    private static final Logger logger = LoggerFactory.getLogger(MdcLoggingFilter.class);
 
-	public void destroy() {
-        // do nothing
-    }
-
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-        insertIntoMDC(request);
+    @Override
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+        MDC.put("traceId", UUID.randomUUID().toString());
+        insertIntoMDC(httpServletRequest);
         try {
-            chain.doFilter(request, response);
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
         } finally {
-            clearMDC();
         }
+        clearMDC();
     }
-    
-	protected void insertIntoMDC(ServletRequest request) {
-		MDC.put(ClassicConstants.REQUEST_REMOTE_HOST_MDC_KEY, request.getRemoteHost());
-		
-		String uuid = MDC.get("UUID");
-		if (uuid == null) {
-			MDC.put("UUID", UUID.randomUUID().toString());
-		}
 
+    protected void insertIntoMDC(ServletRequest request) {
+		MDC.put(ClassicConstants.REQUEST_REMOTE_HOST_MDC_KEY, request.getRemoteHost());
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             MDC.put(ClassicConstants.REQUEST_REQUEST_URI, httpServletRequest.getRequestURI());
@@ -63,8 +59,5 @@ public class MdcLoggingFilter implements Filter {
         MDC.remove(ClassicConstants.REQUEST_METHOD);
         MDC.remove(ClassicConstants.REQUEST_USER_AGENT_MDC_KEY);
         MDC.remove(ClassicConstants.REQUEST_X_FORWARDED_FOR);
-    }
-
-    public void init(FilterConfig arg0) throws ServletException {
     }
 }

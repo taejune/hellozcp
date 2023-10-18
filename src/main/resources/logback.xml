@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
+
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/spring.log}"/>
+    <property name="MDC_CONSOLE_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread][%X{traceId}] %5level %logger{36}: %m%n"/>
 
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
-
-	<property name="MDC_CONSOLE_PATTERN" value="%d [%thread][%X{UUID}] %-5level %36logger{36} [EID:%X{eid}] [SS-ID:%X{ssid}] [USER-ID:%X{user}] - %m%n"/>
-    <appender name="MDC_CONSOLE" class="ch.qos.logback.core.ConsoleAppender"> 
+    <appender name="MDC_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <Pattern>${MDC_CONSOLE_PATTERN}</Pattern>
-        </encoder> 
+        </encoder>
     </appender>
-    
+
     <logger name="org.springframework" level="INFO"/>
-    <logger name="org.springframework.beans.factory.support" level="DEBUG"/>
-    
+<!--    <logger name="org.springframework.beans.factory.support" level="INFO"/>-->
     <root level="DEBUG">
-<!--         <appender-ref ref="CONSOLE" /> -->
-        <appender-ref ref="MDC_CONSOLE" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="MDC_CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </root>
-    
 </configuration>
