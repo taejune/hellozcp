@@ -87,6 +87,8 @@ public class HelloZcpApplication {
         stacktrace = stacktrace.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
         pw.close();
         logger.error("print stacktrace", exception);
+
+        System.err.println(exception.getMessage());
         return "log --------<br>" + stacktrace;
     }
 
