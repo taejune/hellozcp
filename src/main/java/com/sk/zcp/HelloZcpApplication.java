@@ -1,9 +1,6 @@
 package com.sk.zcp;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -43,10 +40,14 @@ public class HelloZcpApplication {
         SpringApplication.run(HelloZcpApplication.class, args);
     }
 
+    @GetMapping("/")
+    public void root(HttpServletResponse httpResponse) throws IOException {
+        httpResponse.sendRedirect("/home");
+    }
+
     @GetMapping("/home")
     public String home() {
-        logger.info("--------- home start ----------");
-        return "Hello ZCP v2";
+        return "Hello ZCP v3";
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -68,28 +69,24 @@ public class HelloZcpApplication {
         sb.append("getRemoteHost : ").append(req.getRemoteHost()).append("<br/>");
         sb.append("getRemoteUser : ").append(req.getRemoteUser()).append("<br/>");
         sb.append("getRemotePort : ").append(req.getRemotePort()).append("<br/>");
-
         return sb.toString();
     }
 
-    @GetMapping("/printErrorLog")
-    public String error() throws Exception {
-        logger.info("--------- printErrorLog start ----------");
-        Exception exception = new Exception("Error service");
+    @GetMapping("/oops")
+    public String error() {
+        Exception exception = new Exception("Fake Error");
         StringWriter sw = new StringWriter();
-        BufferedWriter bw = new BufferedWriter(sw);
-        PrintWriter pw = new PrintWriter(bw);
-
+        PrintWriter pw = new PrintWriter(new BufferedWriter(sw));
         exception.printStackTrace(pw);
-        pw.flush();
-        String stacktrace = sw.toString();
-        stacktrace = stacktrace.replaceAll("\n", "<br/>");
-        stacktrace = stacktrace.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
-        pw.close();
-        logger.error("print stacktrace", exception);
+        logger.error("fake exception occured", exception);
+        return sw.toString().replaceAll("\n", "<br/>").replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+    }
 
-        System.err.println(exception.getMessage());
-        return "log --------<br>" + stacktrace;
+    @GetMapping("/oops2")
+    public String exception() throws Exception {
+        Exception exception = new Exception("Fake Exception");
+        logger.error("fake exception raised", exception);
+        throw exception;
     }
 
     @GetMapping("/404")
@@ -181,8 +178,6 @@ public class HelloZcpApplication {
             addresses.add(inet.getHostAddress());
             logger.info("address for - {}", host);
         }
-
         return ResponseEntity.ok(addresses);
     }
-
 }
