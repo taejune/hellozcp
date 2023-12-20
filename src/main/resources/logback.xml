@@ -6,7 +6,7 @@
 
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/spring.log}"/>
     <property name="MDC_CONSOLE_PATTERN"
-              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread][%X{traceId}] %5level %logger{36}: %m%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss}.%-3relative [%logger{40}] %level : %m%n"/>
 
     <appender name="MDC_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
